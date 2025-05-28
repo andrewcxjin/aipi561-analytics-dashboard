@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import json
+import traceback
 
 app = Flask(__name__)
 
@@ -107,7 +108,12 @@ def dashboard():
 @app.route('/api/data')
 def data():
     log()
-    return jsonify(data_wrangler())
+    try:
+        return jsonify(data_wrangler())
+    except Exception as e:
+        print("Error in /api/data:", e)
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8080))
