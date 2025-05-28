@@ -6,13 +6,15 @@ import json
 
 app = Flask(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "data", "co2_emissions.csv")
+
 # Process data from csv file
 def data_wrangler():
-    df = pd.read_csv("data/co2_emissions.csv")
+    df = pd.read_csv(CSV_PATH)
 
     df.columns = df.columns.str.strip().str.upper()
     df['FLIGHT_MONTH'] = pd.to_datetime(df['FLIGHT_MONTH'], format="%m-%d-%Y")
-
     df["CO2_PER_FLIGHT"] = df["CO2_QTY_TONNES"] / df["TF"]
 
     summary = df.groupby("STATE_NAME").agg({
@@ -29,7 +31,7 @@ def log():
     print(f"[{current}] Data requested from /api/data")
 
 HTML_TEMPLATE = """
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
     <meta charset="UTF-8">
