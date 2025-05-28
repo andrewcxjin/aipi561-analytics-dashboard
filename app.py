@@ -12,7 +12,7 @@ CSV_PATH = os.path.join(BASE_DIR, "data", "co2_emissions.csv")
 
 # Process data from csv file
 def data_wrangler():
-    df = pd.read_csv(CSV_PATH)
+    df = pd.read_csv(CSV_PATH, encoding='latin1')
 
     df.columns = df.columns.str.strip().str.upper()
     df['FLIGHT_MONTH'] = pd.to_datetime(df['FLIGHT_MONTH'], format="%m-%d-%Y")
