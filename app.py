@@ -1,6 +1,8 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template_string, jsonify
 import pandas as pd
 from datetime import datetime
+import os
+import json
 
 app = Flask(__name__)
 
@@ -98,12 +100,13 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def dashboard():
-    return render_template(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE)
 
 @app.route('/api/data')
 def data():
     log()
     return jsonify(data_wrangler())
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
