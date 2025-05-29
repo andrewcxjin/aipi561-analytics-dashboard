@@ -35,6 +35,7 @@ HTML_TEMPLATE = """
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>CO2 Emissions in Europe from Airplanes</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -60,52 +61,43 @@ HTML_TEMPLATE = """
 </head>
 <body>
     <h1>CO2 Emissions by European State</h1>
-    <div class="chart-container">
-        <canvas id="co2Chart"></canvas>
-    </div>
+    <canvas id="co2Chart"></canvas>
+
     <script>
         fetch('/api/data')
             .then(response => response.json())
             .then(data => {
-                const labels = data.map(row => row.State);
-                const values = data.map(row => row['Total CO2 Emissions (Tonnes)']);
+                const states = data.map(row => row.STATE_NAME);
+                const emissions = data.map(row => row.CO2_QTY_TONNES);
 
-                new Chart(document.getElementById('co2Chart'), {
+                const ctx = document.getElementById('co2Chart').getContext('2d');
+                new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: labels,
+                        labels: states,
                         datasets: [{
                             label: 'Total CO2 Emissions (Tonnes)',
-                            data: values,
-                            backgroundColor: 'rgba(72, 202, 228, 0.7)',
-                            borderColor: 'rgba(72, 202, 228, 1)',
+                            data: emissions,
+                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1
                         }]
                     },
                     options: {
-                        maintainAspectRatio: false,
+                        responsive: true,
                         scales: {
-                            x: {
-                                ticks: {
-                                    maxRotation: 90,
-                                    minRotation: 60,
-                                    autoSkip: false
-                                }
-                            },
                             y: {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
                                     text: 'CO2 Tonnes'
                                 }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true
                             },
-                            title: {
-                                display: false
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'State'
+                                }
                             }
                         }
                     }
