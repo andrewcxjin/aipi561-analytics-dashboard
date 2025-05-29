@@ -35,62 +35,77 @@ HTML_TEMPLATE = """
 <!doctype html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>CO2 Emissions in Europe Dashboard</title>
+    <title>CO2 Emissions in Europe from Airplanes</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            text-align: center;
+            margin: 0;
+            padding: 0;
         }
         h1 {
-            text-align: center;
+            margin-top: 20px;
+        }
+        .chart-container {
+            width: 90%;
+            height: 80vh;
+            margin: auto;
         }
         canvas {
-            max-width: 900px;
-            margin: auto;
+            width: 100% !important;
+            height: 100% !important;
         }
     </style>
 </head>
 <body>
     <h1>CO2 Emissions by European State</h1>
-    <canvas id="co2Chart"></canvas>
-
+    <div class="chart-container">
+        <canvas id="co2Chart"></canvas>
+    </div>
     <script>
         fetch('/api/data')
             .then(response => response.json())
             .then(data => {
-                const states = data.map(row => row.STATE_NAME);
-                const emissions = data.map(row => row.CO2_QTY_TONNES);
+                const labels = data.map(row => row.State);
+                const values = data.map(row => row['Total CO2 Emissions (Tonnes)']);
 
-                const ctx = document.getElementById('co2Chart').getContext('2d');
-                new Chart(ctx, {
+                new Chart(document.getElementById('co2Chart'), {
                     type: 'bar',
                     data: {
-                        labels: states,
+                        labels: labels,
                         datasets: [{
                             label: 'Total CO2 Emissions (Tonnes)',
-                            data: emissions,
-                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
+                            data: values,
+                            backgroundColor: 'rgba(72, 202, 228, 0.7)',
+                            borderColor: 'rgba(72, 202, 228, 1)',
                             borderWidth: 1
                         }]
                     },
                     options: {
-                        responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
+                            x: {
+                                ticks: {
+                                    maxRotation: 90,
+                                    minRotation: 60,
+                                    autoSkip: false
+                                }
+                            },
                             y: {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
                                     text: 'CO2 Tonnes'
                                 }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
                             },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'State'
-                                }
+                            title: {
+                                display: false
                             }
                         }
                     }
